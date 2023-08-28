@@ -5,12 +5,9 @@ SPEAKER='Master'
 DEVICE="$(amixer get "$SPEAKER")"
 STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] (\[[[:digit:]]+\.[[:digit:]]{2}dB\] )?\[on|off')"
 
-echo 'DEVICE:'
-echo "$DEVICE"
-echo ''
-echo 'STATUS:'
-echo "$STATUS"
-exit 0
+#echo 'STATUS:'
+#echo "$STATUS"
+#echo ''
 
 # get the maximum volume
 VOL_MAX="$(echo "$DEVICE" | grep -E 'Limits: Playback [[:digit:]]+ - [[:digit:]]' | sed -E 's/ *Limits: Playback [[:digit:]]+ - ([[:digit:]]+)/\1/')"
