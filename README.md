@@ -9,5 +9,7 @@
 ## Backlog
 * `amixer-wrapper -S`
 * `amixer-wrapper -C`
+* multi device control, e.g. "Line out" and "Master"
+* `amixer set <CONTROL> unmute` options: get, set
 * `pactl` compatibility e.g. `pactl set-sink-volume @DEFAULT_SINK@ 50%`
 
