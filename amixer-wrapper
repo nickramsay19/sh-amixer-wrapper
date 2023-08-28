@@ -19,7 +19,7 @@ usage() {
     echo -e '\t-G\tGet current volume as a raw integer.'
     echo -e '\t-c\tChange the volume by a percentage.'
     echo -e '\t-C\tChange the volume by a raw integer.'
-    echo -e '\t-s\tSet the volume to a percentage..'
+    echo -e '\t-s\tSet the volume to a percentage.'
     echo -e '\t-S\tSet the volume to a raw integer.'
     echo -e '\t-h\tShow this usage information.'
 }
