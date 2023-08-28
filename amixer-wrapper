@@ -5,18 +5,11 @@ SPEAKER='Master'
 DEVICE="$(amixer get "$SPEAKER")"
 STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] (\[[[:digit:]]+\.[[:digit:]]{2}dB\] )?\[on|off')"
 
-#echo 'STATUS:'
-#echo "$STATUS"
-#echo ''
-
 # get the maximum volume
 VOL_MAX="$(echo "$DEVICE" | grep -E 'Limits: Playback [[:digit:]]+ - [[:digit:]]' | sed -E 's/ *Limits: Playback [[:digit:]]+ - ([[:digit:]]+)/\1/')"
 VOL_RAW="$(echo "$STATUS" | sed -E 's/: Playback ([[:digit:]]+) \[.+/\1/')"
 VOL_PRC="$(echo "$STATUS" | sed -E 's/.+\[([[:digit:]]+)%\] \[.+/\1/')"
 VOL_MUT="$(echo "$STATUS" | sed -E 's/.+\[(on|off)/\1/')"
-
-#amixer set Master unmute
-#pactl set-sink-volume @DEFAULT_SINK@ 50% 
 
 usage() {
     echo "Usage: $(basename $0) -g | -G | -c <PERCENTAGE-CHANGE> | -C <NUMERIC-CHANGE> | -s <PERCENTAGE> | -S <NUMBER> | -h"
