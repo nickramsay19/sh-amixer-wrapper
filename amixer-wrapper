@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# SET YOUR SPEAKER DEVICE TO CONTROL HERE
 SPEAKER='Master'
 
+# get status info from `amixer`
 DEVICE="$(amixer get "$SPEAKER")"
 STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] (\[[[:digit:]]+\.[[:digit:]]{2}dB\] )?\[on|off')"
 
-# get the maximum volume
+# use sed to extract particular values: max vol, cur raw, cur prc, cur muted
 VOL_MAX="$(echo "$DEVICE" | grep -E 'Limits: Playback [[:digit:]]+ - [[:digit:]]' | sed -E 's/ *Limits: Playback [[:digit:]]+ - ([[:digit:]]+)/\1/')"
 VOL_RAW="$(echo "$STATUS" | sed -E 's/: Playback ([[:digit:]]+) \[.+/\1/')"
 VOL_PRC="$(echo "$STATUS" | sed -E 's/.+\[([[:digit:]]+)%\] \[.+/\1/')"
@@ -22,6 +24,7 @@ usage() {
     echo -e '\t-h\tShow this usage information.'
 }
 
+# parse args
 while getopts 'gGc:C:s:S:h' opt; do
     case "$opt" in
     g) # get percentage
