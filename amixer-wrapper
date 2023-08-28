@@ -3,7 +3,7 @@
 SPEAKER='Master'
 
 DEVICE="$(amixer get "$SPEAKER")"
-STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] \[on|off')"
+STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] (\[[[:digit:]]+\.[[:digit:]]{2}dB\] )?\[on|off')"
 
 echo 'DEVICE:'
 echo "$DEVICE"
