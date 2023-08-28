@@ -1,0 +1,88 @@
+#!/bin/bash
+
+SPEAKER='Master'
+
+DEVICE="$(amixer get "$SPEAKER")"
+STATUS="$(echo "$DEVICE" | grep -m1 -oE ': Playback [[:digit:]]+ \[[[:digit:]]+%\] \[on|off')"
+
+echo 'DEVICE:'
+echo "$DEVICE"
+echo ''
+echo 'STATUS:'
+echo "$STATUS"
+exit 0
+
+# get the maximum volume
+VOL_MAX="$(echo "$DEVICE" | grep -E 'Limits: Playback [[:digit:]]+ - [[:digit:]]' | sed -E 's/ *Limits: Playback [[:digit:]]+ - ([[:digit:]]+)/\1/')"
+VOL_RAW="$(echo "$STATUS" | sed -E 's/: Playback ([[:digit:]]+) \[.+/\1/')"
+VOL_PRC="$(echo "$STATUS" | sed -E 's/.+\[([[:digit:]]+)%\] \[.+/\1/')"
+VOL_MUT="$(echo "$STATUS" | sed -E 's/.+\[(on|off)/\1/')"
+
+#amixer set Master unmute
+#pactl set-sink-volume @DEFAULT_SINK@ 50% 
+
+usage() {
+    echo "Usage: $(basename $0) -g | -G | -c <PERCENTAGE-CHANGE> | -C <NUMERIC-CHANGE> | -s <PERCENTAGE> | -S <NUMBER> | -h"
+    echo -e '\t-g\tGet current volume as a percentage.'
+    echo -e '\t-G\tGet current volume as a raw integer.'
+    echo -e '\t-c\tChange the volume by a percentage.'
+    echo -e '\t-C\tChange the volume by a raw integer.'
+    echo -e '\t-s\tSet the volume to a percentage..'
+    echo -e '\t-S\tSet the volume to a raw integer.'
+    echo -e '\t-h\tShow this usage information.'
+}
+
+while getopts 'gGc:C:s:S:h' opt; do
+    case "$opt" in
+    g) # get percentage
+        echo "${VOL_PRC}%"
+        exit 0
+        ;;
+    G) # get raw num
+        echo "$VOL_RAW" 
+        exit 0
+        ;;
+    c) # change by a percentage
+        arg="$OPTARG" 
+        
+        # remove the percentage sign
+        arg="$(echo "$arg" | tr -d '%')"
+
+        new_val="$(($VOL_PRC + $arg))"
+
+        if [ "$new_val" -gt '100' ]; then
+            new_val="$MAX_BRIGHTNESS"
+        elif [ "$new_val" -lt '0' ]; then
+            new_val='0'
+        fi
+        
+        amixer set "$SPEAKER" "${new_val}%" > '/dev/null'
+        exit 0
+        ;;
+    C) # change by a raw num
+        echo 'Not implemented yet :('
+        exit 0
+        ;;
+    s) # set to a percentage
+        arg="$OPTARG"
+        arg="$(echo "$arg" | tr -d '%')"
+
+        amixer set "$SPEAKER" "${arg}%" > '/dev/null'
+        exit 0
+        ;;
+    S) # set to a raw num
+        echo 'Not implemented yet :('
+        exit 0
+        ;;
+    h)
+        usage
+        exit 0
+        ;;
+    ?)
+        usage
+        exit 1
+        ;;
+    esac
+done
+shift "$(($OPTIND -1))"
+
